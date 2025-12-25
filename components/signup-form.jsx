@@ -1,6 +1,5 @@
 "use client";
 
-import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -28,8 +27,8 @@ function validatePassword(password) {
 }
 
 export function SignupForm(props) {
-  const [isPending, setIsPending] = useState(false);
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,33 +36,35 @@ export function SignupForm(props) {
 
     const formData = new FormData(e.target);
     const password = formData.get("password");
-    const password_confirmation = formData.get("password_confirmation");
+    const confirm = formData.get("password_confirmation");
 
     if (!validatePassword(password)) {
       toast.error(
-        "Password must have lowercase, uppercase, number, and special character"
+        "Password must contain uppercase, lowercase, number, and special character"
       );
-      return;
-    }
-
-    if (password !== password_confirmation) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    try {
-      const res = await registerAction(formData);
-
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("name", res.data.name);
-
-      toast.success("Account created! Please verify your email.");
-      router.push("/verify");
-    } catch (err) {
-      toast.error(err.message || "Registration failed");
-    } finally {
       setIsPending(false);
+      return;
     }
+
+    if (password !== confirm) {
+      toast.error("Passwords do not match");
+      setIsPending(false);
+      return;
+    }
+
+    const res = await registerAction(formData);
+
+    if (!res.success) {
+      toast.error(res.message);
+      setIsPending(false);
+      return;
+    }
+
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("name", res.data.name);
+
+    toast.success("Account created! Please verify your email.");
+    router.push("/verify");
   };
 
   return (
@@ -72,21 +73,25 @@ export function SignupForm(props) {
         <CardTitle>Create an account</CardTitle>
         <CardDescription>Enter your info below</CardDescription>
       </CardHeader>
+
       <CardContent>
         <form onSubmit={handleSubmit}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Full Name</FieldLabel>
-              <Input id="name" name="name" type="text" required />
+              <Input id="name" name="name" required />
             </Field>
+
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input id="email" name="email" type="email" required />
             </Field>
+
             <Field>
               <FieldLabel htmlFor="password">Password</FieldLabel>
               <Input id="password" name="password" type="password" required />
             </Field>
+
             <Field>
               <FieldLabel htmlFor="password_confirmation">
                 Confirm Password
@@ -98,10 +103,12 @@ export function SignupForm(props) {
                 required
               />
             </Field>
+
             <Field>
               <FieldLabel htmlFor="mobile">Phone</FieldLabel>
-              <Input id="mobile" name="mobile" type="text" required />
+              <Input id="mobile" name="mobile" required />
             </Field>
+
             <Field>
               <FieldLabel htmlFor="mobile_country_code">
                 Country Code
@@ -109,16 +116,17 @@ export function SignupForm(props) {
               <Input
                 id="mobile_country_code"
                 name="mobile_country_code"
-                type="text"
                 required
               />
             </Field>
+
             <Field>
               <Button type="submit" disabled={isPending}>
                 {isPending ? "Creating..." : "Create Account"}
               </Button>
+
               <FieldDescription className="text-center">
-                have an account already? <Link href="login">Log In</Link>
+                Already have an account? <Link href="/login">Log In</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>

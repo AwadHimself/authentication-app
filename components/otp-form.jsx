@@ -1,6 +1,5 @@
 "use client";
 
-import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -26,7 +25,6 @@ import { verifyAction } from "@/app/actions/auth";
 import { useState } from "react";
 
 export function OTPForm(props) {
-  const { pending } = useFormStatus();
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
 
@@ -35,40 +33,44 @@ export function OTPForm(props) {
     setIsPending(true);
 
     const formData = new FormData(e.target);
-
     const token = localStorage.getItem("token");
+
     if (!token) {
       toast.error("Please login first");
       router.push("/login");
+      setIsPending(false);
       return;
     }
 
     formData.append("token", token);
 
-    try {
-      await verifyAction(formData);
-      toast.success("Email verified!");
-      router.push("/dashboard");
-    } catch (err) {
-      toast.error(err.message || "Verification failed");
-    } finally {
+    const res = await verifyAction(formData);
+
+    if (!res.success) {
+      toast.error(res.message);
       setIsPending(false);
+      return;
     }
+
+    toast.success("Email verified successfully!");
+    router.push("/dashboard");
   };
 
   return (
     <Card {...props}>
       <CardHeader>
         <CardTitle>Enter verification code</CardTitle>
-        <CardDescription>We sent a 6-digit code to your email.</CardDescription>
+        <CardDescription>We sent a 6-digit code to your email</CardDescription>
       </CardHeader>
+
       <CardContent>
         <form onSubmit={handleSubmit}>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="otp">Verification code</FieldLabel>
+              <FieldLabel htmlFor="otp">Verification Code</FieldLabel>
+
               <InputOTP maxLength={6} id="otp" name="otp">
-                <InputOTPGroup className="gap-2.5 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border">
+                <InputOTPGroup className="gap-2.5 *:rounded-md *:border">
                   <InputOTPSlot index={0} />
                   <InputOTPSlot index={1} />
                   <InputOTPSlot index={2} />
@@ -77,10 +79,12 @@ export function OTPForm(props) {
                   <InputOTPSlot index={5} />
                 </InputOTPGroup>
               </InputOTP>
+
               <FieldDescription>
-                Enter the 6-digit code sent to your email.
+                Enter the 6-digit code sent to your email
               </FieldDescription>
             </Field>
+
             <Field>
               <Button type="submit" disabled={isPending}>
                 {isPending ? "Verifying..." : "Verify"}

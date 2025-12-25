@@ -31,26 +31,25 @@ export function LoginForm(props) {
     setIsPending(true);
 
     const formData = new FormData(e.target);
+    const res = await loginAction(formData);
 
-    try {
-      const res = await loginAction(formData);
-
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("name", res.data.name);
-
-      if (!res.data.email_verified_at) {
-        toast("Please verify your email");
-        router.push("/verify");
-        return;
-      }
-
-      toast.success("Login successful!");
-      router.push("/dashboard");
-    } catch (err) {
-      toast.error(err.message || "Login failed");
-    } finally {
+    if (!res.success) {
+      toast.error(res.message);
       setIsPending(false);
+      return;
     }
+
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("name", res.data.name);
+
+    if (!res.data.email_verified_at) {
+      toast("Please verify your email");
+      router.push("/verify");
+      return;
+    }
+
+    toast.success("Login successful");
+    router.push("/dashboard");
   };
 
   return (

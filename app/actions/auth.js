@@ -1,52 +1,78 @@
 "use server";
 
 import { register, login, verifyEmail } from "@/lib/api";
-import { redirect } from "next/navigation";
 
 export async function registerAction(formData) {
-  const data = {
-    name: formData.get("name"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-    password_confirmation: formData.get("password_confirmation"),
-    mobile: formData.get("mobile"),
-    mobile_country_code: formData.get("mobile_country_code"),
-  };
-
   try {
-    const res = await register(data);
-    return res;
+    const res = await register({
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      password_confirmation: formData.get("password_confirmation"),
+      mobile: formData.get("mobile"),
+      mobile_country_code: formData.get("mobile_country_code"),
+    });
+
+    return {
+      success: true,
+      data: res.data,
+    };
   } catch (err) {
-    throw new Error(err.message || "Registration failed");
+    return {
+      success: false,
+      message:
+        err?.response?.data?.message || err.message || "Registration failed",
+    };
   }
 }
 
 export async function loginAction(formData) {
-  const data = {
-    email: formData.get("email"),
-    password: formData.get("password"),
-  };
-
   try {
-    const res = await login(data);
-    return res;
+    const res = await login({
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
+
+    return {
+      success: true,
+      data: res.data,
+    };
   } catch (err) {
-    throw new Error(err.message || "Login failed");
+    return {
+      success: false,
+      message:
+        err?.response?.data?.message ||
+        err.message ||
+        "Invalid email or password",
+    };
   }
 }
 
 export async function verifyAction(formData) {
-  const code = Array.from(formData.entries())
-    .filter(([key]) => key.startsWith("otp"))
-    .map(([_, value]) => value)
-    .join("");
-
-  const token = formData.get("token");
-  if (!token) throw new Error("No token found");
-
   try {
+    const code = Array.from(formData.entries())
+      .filter(([key]) => key.startsWith("otp"))
+      .map(([_, value]) => value)
+      .join("");
+
+    const token = formData.get("token");
+    if (!token) {
+      return {
+        success: false,
+        message: "Session expired, please login again",
+      };
+    }
+
     await verifyEmail({ code, token });
+
+    return { success: true };
   } catch (err) {
-    throw new Error(err.message || "Verification failed");
+    return {
+      success: false,
+      message:
+        err?.response?.data?.message ||
+        err.message ||
+        "Invalid verification code",
+    };
   }
 }
