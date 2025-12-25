@@ -15,7 +15,6 @@ A modern web authentication application built with Next.js featuring login, regi
 - **Next.js 16.1.1** - React framework for frontend development
 - **React 19.2.3** - JavaScript library for building user interfaces
 - **Tailwind CSS 4** - Utility-first CSS framework
-- **Sonner** - Toast notification library
 
 ## Prerequisites
 
