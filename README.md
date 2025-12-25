@@ -1,6 +1,10 @@
 # Authentication App
 
+<<<<<<< HEAD
 A modern web authentication application built with Next.js featuring login, registration, and email verification.
+=======
+A modern web authentication application built with Next.js featuring login, registration, and  verification.
+>>>>>>> d2ef0a200eb491f484af807e7db22b6401e437d1
 
 ## Features
 
@@ -9,16 +13,23 @@ A modern web authentication application built with Next.js featuring login, regi
 - Email verification using OTP code
 - Protected dashboard for authenticated users
 - Session management with token storage
+<<<<<<< HEAD
 - Modern UI design using Tailwind CSS and Radix UI
 
+=======
+- Modern UI design using Tailwind CSS and shadcn 
+>>>>>>> d2ef0a200eb491f484af807e7db22b6401e437d1
 ## Technologies Used
 
 - **Next.js 16.1.1** - React framework for frontend development
 - **React 19.2.3** - JavaScript library for building user interfaces
 - **Tailwind CSS 4** - Utility-first CSS framework
+<<<<<<< HEAD
 - **Radix UI** - Accessible UI component library
 - **Sonner** - Toast notification library
 - **Lucide React** - Icon library
+=======
+>>>>>>> d2ef0a200eb491f484af807e7db22b6401e437d1
 
 ## Prerequisites
 
@@ -29,7 +40,11 @@ A modern web authentication application built with Next.js featuring login, regi
 
 1. Clone the repository:
 ```bash
+<<<<<<< HEAD
 git clone <repository-url>
+=======
+git clone <https://github.com/AwadHimself/authentication-app>
+>>>>>>> d2ef0a200eb491f484af807e7db22b6401e437d1
 cd authentication-app
 ```
 
@@ -58,6 +73,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
+<<<<<<< HEAD
 ### Production Build
 
 ```bash
@@ -216,4 +232,7 @@ For help and support, please open an issue in the repository.
 
 ---
 
+=======
+
+>>>>>>> d2ef0a200eb491f484af807e7db22b6401e437d1
 **Note:** Make sure to update the `BASE_URL` in `lib/api.js` to point to your API endpoint before running the application.
